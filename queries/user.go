@@ -13,9 +13,9 @@ func User(user *models.User) string {
 
 	if p.Count == "0" {
 		println(user.Nickname)
-		if user.Is_admin {
+		if user.Role == 3 || user.Role == 2 {
 			_, err := db.Exec(`INSERT INTO user_interface VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-				user.Nickname, user.Email, user.Fullname, user.About, user.Country, user.Password, user.Is_admin)
+				user.Nickname, user.Email, user.Fullname, user.About, user.Country, user.Password, user.Role)
 			if err != nil {
 				log.Println(err)
 			}else{
@@ -55,4 +55,43 @@ func FindUser(nickname string) *models.User {
 	}
 
 	return findUser
+}
+
+func ChangeRole(nickname string, role int) error {
+
+	sqlStatement := `UPDATE user_interface
+					SET role = $2
+					WHERE nickname = $1;`
+	_, err := db.Exec(sqlStatement, nickname, role)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return err
+		}
+
+		log.Println("Error of find user by nickname")
+		return err
+	}
+
+	return nil
+}
+
+func FindUsers() *[]models.User {
+
+	findUsers := &[]models.User{}
+	err := db.Select(
+		findUsers,
+		`SELECT  *
+			   FROM user_interface`)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
+
+		log.Println("Error of find users")
+		return nil
+	}
+
+	return findUsers
 }

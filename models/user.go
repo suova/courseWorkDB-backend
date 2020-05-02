@@ -6,8 +6,12 @@ type User struct {
 	Nickname string `json:"nickname"`
 	Country string `json:"country"`
 	Password string `json:"password"`
-	Is_admin bool `json:"is_admin"`
+	Role int `json:"role"`
 }
 type Exist struct {
 	Count    string `json:"count"`
+}
+
+type Role struct {
+	Role    int `json:"role"`
 }

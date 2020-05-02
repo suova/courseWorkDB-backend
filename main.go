@@ -12,20 +12,21 @@ import (
 func main() {
 	queries.InitDB()
 	corsMiddleware := handlers.CORS(
-		handlers.AllowedOrigins([]string{"http://boiling-chamber-90136.herokuapp.com",
-			"https://boiling-chamber-90136.herokuapp.com",
-			" http://localhost:8080/",
-			"http://95.163.209.195:8000"}),
+		handlers.AllowedOrigins([]string{
+			" http://localhost:8080/"}),
 		handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"}),
 		handlers.AllowedHeaders([]string{"Content-Type"}),
 		handlers.AllowCredentials(),
 	)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/",controllers.HandleThreadGet).Methods("GET")
 	r.HandleFunc("/forum/create",controllers.HandleCreateThread).Methods("POST")
 
 	r.HandleFunc("/user/{nickname}/create", controllers.HandleUserPost).Methods("POST")
-	r.HandleFunc("/user/{nickname}/profile", controllers.HandleUserGet).Methods("GET") // TODO: checking if user exist or email already in use
+	r.HandleFunc("/user/{nickname}/profile", controllers.HandleUserGet).Methods("GET")
+	r.HandleFunc("/getUsers", controllers.HandleUsersGet).Methods("GET")
+	r.HandleFunc("/changeRole/{nickname}", controllers.HandleChangeRole).Methods("POST")
 	r.HandleFunc("/user/{nickname}/singIn", controllers.HandleUsersignin).Methods("POST")
 
 	r.HandleFunc("/forum/{ForumID}/post/{nickname}/create",controllers.HandleCreatePost).Methods("POST")
@@ -38,6 +39,9 @@ func main() {
 
 	r.HandleFunc("/like/{CommentID}/{nickname}",controllers.HandleLike).Methods("GET")
 	r.HandleFunc("/dislike/{CommentID}/{nickname}",controllers.HandleDislike).Methods("GET")
+
+	r.HandleFunc("/logout",controllers.HandleLogOut).Methods("POST")
+	r.HandleFunc("/sendCookie/{nickname}",controllers.HandleSendCookie).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8181", corsMiddleware(r)))
 	//srv := &http.Server{

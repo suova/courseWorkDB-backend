@@ -9,7 +9,7 @@ CREATE TABLE user_interface (
                       about text,
                       country text,
                       password text,
-                      is_admin bool DEFAULT FALSE
+                      role int DEFAULT 1 -- 0 - banned; 1 - user; 2 - moderator; 3 - admin
 );
 
 CREATE INDEX users_cover_index
